@@ -1,0 +1,22 @@
+{
+    "instance_min_count": 1,
+    "instance_max_count": 2,
+    "scaling_rules": [
+        {
+            "metric_type": "responsetime",
+            "threshold": 500,
+            "breach_duration_secs": 60,
+            "cool_down_secs": 120,
+            "operator": ">",
+            "adjustment": "+1"
+        },
+        {
+            "metric_type": "responsetime",
+            "threshold": 500,
+            "breach_duration_secs": 60,
+            "cool_down_secs": 120,
+            "operator": "<",
+            "adjustment": "-1"
+        }
+    ]
+}

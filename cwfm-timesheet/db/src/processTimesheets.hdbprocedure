@@ -1,0 +1,35 @@
+PROCEDURE "processTimesheets"() 
+  LANGUAGE SQLSCRIPT 
+  SQL SECURITY INVOKER AS 
+BEGIN 
+  /*********************************************
+  Evaluate the reason for Partner inconsistency
+  *********************************************/
+  LT_BP_VAL = SELECT TIMESHEETRECORDKEY, 'PROC' AS STATUS, 
+		 CASE WHEN BP.PARTNER_ID IS NULL THEN 'BP01' 
+	ELSE CASE WHEN BP.STATUS != 'ACTV' THEN 'BP03'
+	ELSE CASE WHEN BP.IS_ARCHIVED = 'X' THEN 'BP02' 
+	ELSE '' END END END AS REASON
+  FROM CWFM_TIMESHEET AS TS LEFT JOIN VT_BUPA AS BP ON TS.TIMESHEETPARTNERID = BP.PARTNER_ID
+  WHERE TS.TIMESHEETSTATUS_CODE IN ('CREA','EROR');
+
+  /*********************************************
+  Set the status of the timesheet accordingly
+  *********************************************/
+  LT_BP_VAL = SELECT TIMESHEETRECORDKEY, 
+  CASE WHEN REASON != '' THEN 'EROR' ELSE 'PROC' END AS STATUS, REASON FROM :LT_BP_VAL;
+
+  /*********************************************
+  Update the status of the timesheets in DB
+  *********************************************/
+  MERGE INTO CWFM_TIMESHEET AS TS USING :LT_BP_VAL AS BP ON TS.TIMESHEETRECORDKEY = BP.TIMESHEETRECORDKEY
+  WHEN MATCHED THEN UPDATE SET TS.TIMESHEETSTATUS_CODE = BP.STATUS, TS.TIMESHEETSTATUSREASON_CODE = BP.REASON;
+
+  /**********************************************************
+  Provide a unique Record ID for the newly created timesheets
+  **********************************************************/
+  UPDATE CWFM_TIMESHEET
+  SET TIMESHEETRECORDID = "timesheet_record_id".NEXTVAL
+  WHERE TIMESHEETRECORDID = ''
+    OR TIMESHEETRECORDID IS NULL;
+END

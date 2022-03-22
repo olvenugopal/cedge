@@ -1,0 +1,14 @@
+{
+    "hdi2hana_service_key": {
+        "object_owner": {
+            "roles": [
+                "RFCROLE"
+            ]
+        },
+        "application_user": {
+            "roles": [
+                "RFCROLE"
+            ]
+        }
+    }
+}

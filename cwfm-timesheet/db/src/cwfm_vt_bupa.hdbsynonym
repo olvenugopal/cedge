@@ -1,0 +1,8 @@
+{
+    "VT_BUPA": {
+        "target": {
+            "object": "VT_BUPA",
+            "schema": "CWFM"
+        }
+    }
+}

@@ -1,0 +1,110 @@
+## Generated mta.yaml based on template version 0.4.0
+## appName = cwfm-timesheet
+## language=nodejs; multitenant=false
+## approuter=
+_schema-version: "3.1"
+ID: cwfm-timesheet
+description: CAP nodejs based Timesheet Application
+version: 1.0.0
+parameters:
+  enable-parallel-deployments: true
+
+build-parameters:
+  before-all:
+    - builder: custom
+      commands:
+        - npm ci
+        - npx -p @sap/cds-dk cds build --production
+
+modules:
+  # ----------------- SERVER MODULE -----------------------
+  - name: cwfm-timesheet-srv
+    type: nodejs
+    path: gen/srv
+    properties:
+      response_time: 10
+    requires:
+      - name: cwfm-timesheet-xsuaa
+      - name: cwfm-timesheet-db
+      - name: cwfm-timesheet-autoscaler
+        parameters:
+          path: ./autoscaler.json
+    provides:
+      - name: srv-api
+        properties:
+          srv-url: ${default-url}
+    parameters:
+      buildpack: nodejs_buildpack
+    build-parameters:
+      builder: npm-ci
+      ignore: ["node_modules/"]
+
+  # ----------- HDI DEPLOYER SIDE-CAR MODULE --------------
+  - name: cwfm-timesheet-db-deployer
+    type: hdb
+    path: gen/db
+    requires:
+      - name: cwfm-timesheet-db
+        properties:
+          TARGET_CONTAINER: ~{hdi-service-name}
+      - name: cross-container-service-1
+        group: SERVICE_REPLACEMENTS
+        properties:
+          key: hdi2hana_service_key
+          service: ~{the-service-name}
+    parameters:
+      buildpack: nodejs_buildpack
+
+  # ----------------- APP ROUTER MODULE -------------------
+  - name: cwfm-timesheet-approuter
+    type: approuter.nodejs
+    path: approuter
+    parameters:
+      buildpack: nodejs_buildpack
+    build-parameters:
+      ignore: ["node_modules/"]
+    requires:
+      - name: cwfm-timesheet-xsuaa
+      - name: srv-api
+        group: destinations
+        properties:
+          name: srv-api
+          forwardAuthToken: true
+          strictSSL: false
+          url: ~{srv-url}
+
+resources:
+  # ------------------- DB RESOURCE -----------------------
+  - name: cwfm-timesheet-db
+    type: com.sap.xs.hdi-container
+    parameters:
+      service: hana
+      service-plan: hdi-shared
+    properties:
+      hdi-service-name: ${service-name}
+
+  # ---------------- AUTO SCALER RESOURCE -----------------
+  - name: cwfm-timesheet-autoscaler
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: autoscaler
+      service-plan: standard
+
+  # ---------- HDI to HANA CLOUD - RESOURCE ---------------
+  - name: cross-container-service-1
+    type: org.cloudfoundry.existing-service
+    parameters:
+      service-name: hdi2hanacloud
+    properties:
+      the-service-name: ${service-name}
+
+  # ------------------- XSUAA SERVICE ---------------------
+  - name: cwfm-timesheet-xsuaa
+    type: com.sap.xs.uaa
+    parameters:
+      service-name: cwfm-timesheet-xsuaa
+      path: ./xs-security.json
+      service: xsuaa
+      service-plan: application
+      service-keys:
+        - name: cwfm-timesheet-xsuaa-key

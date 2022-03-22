@@ -1,0 +1,14 @@
+{
+    "name": "cwfm-timesheet-approuter",
+    "version": "0.0.2",
+    "description": "Node.js based application router service",
+    "dependencies": {
+        "@sap/approuter": "^10"
+    },
+    "engines": {
+        "node": "^14"
+    },
+    "scripts": {
+        "start": "node node_modules/@sap/approuter/approuter.js"
+    }
+}

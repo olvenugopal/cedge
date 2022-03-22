@@ -1,0 +1,20 @@
+{
+    "xsappname": "cwfm-timesheet-approuter",
+    "tenant-mode": "dedicated",
+    "scopes": [
+        {
+            "name": "$XSAPPNAME.Admin",
+            "description": "Admin"
+        }
+    ],
+    "attributes": [],
+    "role-templates": [
+        {
+            "name": "Admin",
+            "description": "Admin Role",
+            "scope-references": [
+                "$XSAPPNAME.Admin"
+            ]
+        }
+    ]
+}

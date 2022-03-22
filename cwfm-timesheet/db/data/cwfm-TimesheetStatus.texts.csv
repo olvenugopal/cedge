@@ -1,0 +1,6 @@
+code;locale;name;descr
+CREA;en;Created;Created
+PEND;en;PendingApproval;Pending Approval
+PROC;en;Processed;Processed
+REJE;en;Rejected;Rejected
+EROR;en;Error;Error

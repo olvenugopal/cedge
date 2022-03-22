@@ -1,0 +1,4 @@
+code;locale;name;descr
+BP01;en;InvalidPartner;Invalid Partner
+BP02;en;PartnerArchived;Partner Is Archived
+BP03;en;BPStatInvalid;Partner Status Is Invalid
