@@ -47,6 +47,7 @@ modules:
       - name: cwfm-timesheet-db
         properties:
           TARGET_CONTAINER: ~{hdi-service-name}
+      - name: cwfm-timesheet-xsuaa
       - name: cross-container-service-1
         group: SERVICE_REPLACEMENTS
         properties:
