@@ -33,13 +33,12 @@ entity TimesheetStatusReason : sap.common.CodeList {
 // Timesheet Datamodel
 //
 entity Timesheet : managed {
-    key TimesheetRecordKey    : UUID @Core.Computed;
-        TimesheetRecordID     : String(10);
-        TimesheetPartnerID    : String;
-        TimesheetDate         : Date;
-        ProjectReference      : String(50);
-        CheckInTime           : Time;
-        CheckOutTime          : Time;
-        TimesheetStatus       : Association to one TimesheetStatus;
-        TimesheetStatusReason : Association to one TimesheetStatusReason;
+    key RecordKey        : UUID @Core.Computed;
+        RecordID         : String(10);
+        PartnerID        : String;
+        WorkDate         : Date;
+        WorkDuration     : Time;
+        ProjectReference : String(50);
+        Status           : Association to one TimesheetStatus;
+        StatusReason     : Association to one TimesheetStatusReason;
 }
