@@ -5,7 +5,7 @@
         {
             "authenticationType": "xsuaa",
             "csrfProtection": false,
-            "source": "^/(.*)",
+            "source": "^/cwfm/(.*)",
             "destination": "cap-catalog-api"
         },
         {
