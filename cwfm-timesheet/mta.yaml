@@ -176,7 +176,7 @@ resources:
                 Type: HTTP
                 URL: https://ui5.sap.com
               - Authentication: NoAuthentication
-                Name: cap-catalog-api
+                Name: cwfm-timesheet-api
                 ProxyType: Internet
                 Type: HTTP
                 URL: https://${appname}.${default-domain}

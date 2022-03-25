@@ -4,9 +4,9 @@
     "routes": [
         {
             "authenticationType": "xsuaa",
-            "csrfProtection": false,
+            "csrfProtection": true,
             "source": "^/cwfm/(.*)",
-            "destination": "cap-catalog-api"
+            "destination": "cwfm-timesheet-api"
         },
         {
             "source": "^/resources/(.*)$",

@@ -8,7 +8,7 @@ annotate TimesheetService.Timesheet with @(
 			{Value: PartnerID, Label:'Partner'},
 			{Value: WorkDate, Label:'Work Date'},
 			{Value: WorkDuration, Label:'Work Duration'},
-            {Value: Status.code, Label:'Status'},
+            {Value: Status.descr, Label:'Status'},
             {Value: ProjectReference, Label:'Project'},
 		],
 		HeaderInfo: {
