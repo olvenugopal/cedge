@@ -20,7 +20,7 @@ modules:
   # ----------------- SERVER MODULE -----------------------
   - name: cwfm-timesheet-srv
     type: nodejs
-    path: gen/srv
+    path: srv
     properties:
       response_time: 10
     requires:
@@ -42,7 +42,7 @@ modules:
   # ----------- HDI DEPLOYER SIDE-CAR MODULE --------------
   - name: cwfm-timesheet-db-deployer
     type: hdb
-    path: gen/db
+    path: db
     requires:
       - name: cwfm-timesheet-db
         properties:
