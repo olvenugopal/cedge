@@ -1,5 +1,6 @@
 'use strict';
 const cds = require('@sap/cds');
+const log = require('cf-nodejs-logging-support');
 
 class ProcessingEngine {
     constructor() {
@@ -13,7 +14,7 @@ class ProcessingEngine {
     processTimesheets(tx) {
         let processFn = `call "processTimesheets"( )`;
         tx.run(processFn);
-        console.log('Successfully processed the timesheets using HANA procedures');
+        log.info("[CWFM] Successfully processed the timesheets using HANA procedures");
     }
 
     /**
@@ -37,7 +38,7 @@ class ProcessingEngine {
             const interval = 1000;
             cds.spawn({ after: interval /* ms */ }, this.jobCallback);
             this.jobActive = true;
-            console.log('A Job is submitted (triggers in %ims) to process %i timesheets', interval, checkResult.rowCount);
+            log.info("[CWFM] A Job is submitted (triggers in %ims) to process %i timesheets", interval, checkResult.rowCount);
         }
     }
 

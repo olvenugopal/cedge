@@ -22,10 +22,12 @@ modules:
     type: nodejs
     path: gen/srv
     properties:
-      response_time: 10
+      prc_delay_time: 0
     requires:
       - name: cwfm-timesheet-xsuaa
       - name: cwfm-timesheet-db
+      - name: cwfm-timesheet-job-scheduler
+      - name: cwfm-timesheet-app-log
       - name: cwfm-timesheet-autoscaler
         parameters:
           path: ./autoscaler.json
@@ -48,6 +50,7 @@ modules:
         properties:
           TARGET_CONTAINER: ~{hdi-service-name}
       - name: cwfm-timesheet-xsuaa
+      - name: cwfm-timesheet-app-log
       - name: cross-container-service-1
         group: SERVICE_REPLACEMENTS
         properties:
@@ -106,6 +109,23 @@ resources:
       service-name: cwfm-timesheet-xsuaa
       path: ./xs-security.json
       service: xsuaa
-      service-plan: application
+      service-plan: broker
       service-keys:
         - name: cwfm-timesheet-xsuaa-key
+
+  # ------------- JOB SCHEDULER SERVICE -------------------
+  - name: cwfm-timesheet-job-scheduler
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service-name: cwfm-timesheet-job-sch-srv
+      service: jobscheduler
+      service-plan: lite
+      config:
+        enable-xsuaa-support: true
+
+  # -------------- APP LOGGING SERVICE --------------------
+  - name: cwfm-timesheet-app-log
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: application-logs
+      service-plan: lite

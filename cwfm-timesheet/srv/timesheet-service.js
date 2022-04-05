@@ -2,6 +2,7 @@
 
 const cds = require('@sap/cds');
 const prc = require('./processing-engine');
+const log = require('cf-nodejs-logging-support');
 
 class TimesheetService extends cds.ApplicationService {
 
@@ -11,22 +12,21 @@ class TimesheetService extends cds.ApplicationService {
          * Process all Timesheets in 'Created' status
          */
         this.on('processTimesheets', async req => {
-            console.log("Entered Action handler for 'processTimesheets'");
+            log.info("[CWFM] Entered Action handler for 'processTimesheets'");
         });
 
         /**
          * Before CREATE of Timesheets
          */
         this.before(['CREATE'], 'Timesheet', async req => {
-            console.log("Entered Event handler 'BeforeCreate' of Timesheet");
-            prc.wait(10000);
+            log.info("[CWFM] Entered Event handler 'BeforeCreate' of Timesheet");
         });
 
         /**
          * After CREATE of Timesheets
          */
         this.after(['CREATE'], 'Timesheet', async (results, req) => {
-            console.log("Entered Event handler 'AfterCreate' of Timesheet");
+            log.info("[CWFM] Entered Event handler 'AfterCreate' of Timesheet");
             //console.log('The ID of the user is %s', req.user.id);
             //let a = req.user;
             //if (req.user.is('authenticated')) { console.log('The user is authenticated'); }
@@ -37,10 +37,12 @@ class TimesheetService extends cds.ApplicationService {
         });
 
         /**
-         * After READ of Timesheets
+         * Before READ of Timesheets
          */
-        this.after(['READ'], 'Timesheet', each => {
-            console.log("[AFTER READ] Timesheet Read");
+        this.before(['READ'], 'Timesheet', (req) => {
+            log.info("[CWFM] Entered Event handler 'BeforeRead' of Timesheet");
+            log.info("[CWFM] Delay Time Config: %i", Number(process.env.prc_delay_time));
+            prc.wait(Number(process.env.prc_delay_time));
         });
 
         // Add base class's handlers. Handlers registered above go first.

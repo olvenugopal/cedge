@@ -11,10 +11,12 @@
     "role-templates": [
         {
             "name": "Admin",
-            "description": "Admin Role",
-            "scope-references": [
-                "$XSAPPNAME.Admin"
-            ]
+            "description": "CWFM: Timesheet Admin Role",
+            "default-role-name": "CWFM: Timesheet Administrator",
+            "scope-references": ["$XSAPPNAME.Admin"]
         }
+    ],
+    "authorities": [
+        "$XSAPPNAME.Admin"
     ]
 }
