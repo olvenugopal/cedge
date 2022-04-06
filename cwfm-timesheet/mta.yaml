@@ -69,6 +69,7 @@ modules:
       ignore: ["node_modules/"]
     requires:
       - name: cwfm-timesheet-xsuaa
+      - name: cwfm-timesheet-job-scheduler
       - name: srv-api
         group: destinations
         properties:
@@ -117,7 +118,7 @@ resources:
   - name: cwfm-timesheet-job-scheduler
     type: org.cloudfoundry.managed-service
     parameters:
-      service-name: cwfm-timesheet-job-sch-srv
+      service-name: job-sch-srv
       service: jobscheduler
       service-plan: lite
       config:
