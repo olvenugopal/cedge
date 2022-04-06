@@ -72,7 +72,7 @@ modules:
       - name: srv-api
         group: destinations
         properties:
-          name: srv-api
+          name: srv-api-dest
           forwardAuthToken: true
           strictSSL: false
           url: ~{srv-url}
