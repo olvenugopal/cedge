@@ -39,7 +39,7 @@ entity Timesheet : managed {
         WorkDate         : Date;
         WorkDuration     : Time;
         ProjectReference : String(50);
-        MatchPercent     : Decimal;
+        MatchScore       : Decimal;
         Status           : Association to one TimesheetStatus;
         StatusReason     : Association to one TimesheetStatusReason;
 }

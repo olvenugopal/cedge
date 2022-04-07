@@ -2,15 +2,26 @@ PROCEDURE "processTimesheets"()
   LANGUAGE SQLSCRIPT 
   SQL SECURITY INVOKER AS 
 BEGIN 
+  
+  /**********************************************************
+  Select all the records that need processing
+  Provide a unique Record ID for the newly created timesheets
+  **********************************************************/
+  LT_TS = SELECT RECORDKEY, WORKDATE, WORKDURATION,
+  CASE WHEN RECORDID IS NULL THEN "timesheet_record_id".NEXTVAL 
+  ELSE RECORDID END AS RECORDID, 
+  PARTNERID, STATUS_CODE, STATUSREASON_CODE
+  FROM CWFM_TIMESHEET AS TS WHERE TS.STATUS_CODE IN ('CREA','EROR');
+
   /*********************************************
   Evaluate the reason for Partner inconsistency
   *********************************************/
   LT_BP_VAL = SELECT RECORDKEY, 'PROC' AS STATUS, 
-		 CASE WHEN BP.PARTNER_ID IS NULL THEN 'BP01' 
+	CASE WHEN BP.PARTNER_ID IS NULL THEN 'BP01' 
 	ELSE CASE WHEN BP.STATUS != 'ACTV' THEN 'BP03'
 	ELSE CASE WHEN BP.IS_ARCHIVED = 'X' THEN 'BP02' 
 	ELSE '' END END END AS REASON
-  FROM CWFM_TIMESHEET AS TS LEFT JOIN VT_BUPA AS BP ON TS.PARTNERID = BP.PARTNER_ID
+  FROM :LT_TS AS TS LEFT JOIN VT_BUPA AS BP ON TS.PARTNERID = BP.PARTNER_ID
   WHERE TS.STATUS_CODE IN ('CREA','EROR');
 
   /*********************************************
@@ -20,16 +31,38 @@ BEGIN
   CASE WHEN REASON != '' THEN 'EROR' ELSE 'PROC' END AS STATUS, REASON FROM :LT_BP_VAL;
 
   /*********************************************
+  Calculate the actuals (using logs in remote system)
+  *********************************************/
+  LT_LOGS = SELECT PARTNER_ID, ACCESS_DATE, SUM(DURATION) AS DURATION FROM 
+  ( SELECT PARTNER_ID, ACCESS_DATE, SECONDS_BETWEEN(TIME_IN,TIME_OUT) AS DURATION 
+  FROM VT_ACCESS_LOGS WHERE PARTNER_ID IN ( SELECT DISTINCT PARTNER_ID FROM :LT_TS ) )
+  GROUP BY PARTNER_ID, ACCESS_DATE;
+  
+  /*********************************************
+  Calculate the score = actual / recorded
+  *********************************************/
+  LT_SCORE = SELECT TS.RECORDKEY, 
+  CASE WHEN SECONDS_BETWEEN('00:00:00',TS.WORKDURATION) > 0 
+  THEN IFNULL(LOG.DURATION, 0) / SECONDS_BETWEEN('00:00:00', TS.WORKDURATION)
+  ELSE 0 END AS SCORE FROM :LT_TS AS TS LEFT JOIN :LT_LOGS AS LOG 
+  ON TS.PARTNERID = LOG.PARTNER_ID AND TS.WORKDATE = LOG.ACCESS_DATE;
+
+  /*********************************************
+  Prepare the data for update to the DB
+  *********************************************/  
+  LT_TS_UPD = SELECT TS.RECORDKEY, TS.RECORDID, TS.WORKDATE, 
+  IFNULL(BP.STATUS, TS.STATUS_CODE) AS STATUS_CODE,
+  IFNULL(BP.REASON, TS.STATUSREASON_CODE) AS STATUSREASON_CODE,
+  IFNULL(LOG.SCORE, 0) AS MATCHSCORE
+  FROM :LT_TS AS TS 
+  LEFT JOIN :LT_SCORE AS LOG ON LOG.RECORDKEY = TS.RECORDKEY
+  LEFT JOIN :LT_BP_VAL AS BP ON BP.RECORDKEY = TS.RECORDKEY;
+
+  /*********************************************
   Update the status of the timesheets in DB
   *********************************************/
-  MERGE INTO CWFM_TIMESHEET AS TS USING :LT_BP_VAL AS BP ON TS.RECORDKEY = BP.RECORDKEY
-  WHEN MATCHED THEN UPDATE SET TS.STATUS_CODE = BP.STATUS, TS.STATUSREASON_CODE = BP.REASON;
+  MERGE INTO CWFM_TIMESHEET AS TS USING :LT_TS_UPD AS UPD ON TS.RECORDKEY = UPD.RECORDKEY
+  WHEN MATCHED THEN UPDATE SET TS.STATUS_CODE = UPD.STATUS_CODE, TS.RECORDID = UPD.RECORDID,
+  TS.STATUSREASON_CODE = UPD.STATUSREASON_CODE, TS.MATCHSCORE = UPD.MATCHSCORE;
 
-  /**********************************************************
-  Provide a unique Record ID for the newly created timesheets
-  **********************************************************/
-  UPDATE CWFM_TIMESHEET
-  SET RECORDID = "timesheet_record_id".NEXTVAL
-  WHERE RECORDID = ''
-    OR RECORDID IS NULL;
 END

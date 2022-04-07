@@ -1,0 +1,8 @@
+{
+    "VT_ACCESS_LOGS": {
+        "target": {
+            "object": "VT_ACCESS_LOGS",
+            "schema": "CWFM"
+        }
+    }
+}
