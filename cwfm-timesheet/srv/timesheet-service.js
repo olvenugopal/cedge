@@ -18,15 +18,15 @@ class TimesheetService extends cds.ApplicationService {
         /**
          * Before CREATE of Timesheets
          */
-        this.before(['CREATE'], 'Timesheet', async req => {
-            log.info("[CWFM] Entered Event handler 'BeforeCreate' of Timesheet");
+        this.before(['CREATE'], 'Timesheets', async req => {
+            log.info("[CWFM] Entered Event handler 'BeforeCreate' of Timesheets");
         });
 
         /**
          * After CREATE of Timesheets
          */
-        this.after(['CREATE'], 'Timesheet', async (results, req) => {
-            log.info("[CWFM] Entered Event handler 'AfterCreate' of Timesheet");
+        this.after(['CREATE'], 'Timesheets', async (results, req) => {
+            log.info("[CWFM] Entered Event handler 'AfterCreate' of Timesheets");
             //console.log('The ID of the user is %s', req.user.id);
             //let a = req.user;
             //if (req.user.is('authenticated')) { console.log('The user is authenticated'); }
@@ -39,8 +39,8 @@ class TimesheetService extends cds.ApplicationService {
         /**
          * Before READ of Timesheets
          */
-        this.before(['READ'], 'Timesheet', (req) => {
-            log.info("[CWFM] Entered Event handler 'BeforeRead' of Timesheet");
+        this.before(['READ'], 'Timesheets', (req) => {
+            log.info("[CWFM] Entered Event handler 'BeforeRead' of Timesheets");
             log.info("[CWFM] Delay Time Config: %i", Number(process.env.prc_delay_time));
             prc.wait(Number(process.env.prc_delay_time));
         });

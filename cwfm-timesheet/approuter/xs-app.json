@@ -2,8 +2,8 @@
     "authenticationMethod": "route",
     "routes": [
         {
-            "source": "^/cwfm/do/(.*)$",
-            "target": "/cwfm/$1",
+            "source": "^/service/do/(.*)$",
+            "target": "/service/$1",
             "destination": "srv-api-dest",
             "authenticationType": "none",
             "csrfProtection": true

@@ -10,36 +10,36 @@ using {
 // Code Lists
 //
 @cds.odata.valuelist
-entity TimesheetStatus : sap.common.CodeList {
+entity TimesheetStatuses : sap.common.CodeList {
     key code : String(4) enum {
-            Created         = 'CREA';
-            Error           = 'EROR';
-            PendingApproval = 'PEND';
-            Processed       = 'PROC';
-            Rejected        = 'REJE';
+            created         = 'CREA';
+            error           = 'EROR';
+            pendingApproval = 'PEND';
+            processed       = 'PROC';
+            rejected        = 'REJE';
         };
 }
 
 @cds.odata.valuelist
-entity TimesheetStatusReason : sap.common.CodeList {
+entity TimesheetStatusReasons : sap.common.CodeList {
     key code : String(4) enum {
-            InvalidPartner  = 'BP01';
-            PartnerArchived = 'BP02';
-            BPStatInvalid   = 'BP03';
+            invalidPartner  = 'BP01';
+            partnerArchived = 'BP02';
+            bpStatusInvalid = 'BP03';
         };
 }
 
 //
 // Timesheet Datamodel
 //
-entity Timesheet : managed {
-    key RecordKey        : UUID @Core.Computed;
-        RecordID         : String(10);
-        PartnerID        : String;
-        WorkDate         : Date;
-        WorkDuration     : Time;
-        ProjectReference : String(50);
-        MatchScore       : Decimal;
-        Status           : Association to one TimesheetStatus;
-        StatusReason     : Association to one TimesheetStatusReason;
+entity Timesheets : managed {
+    key ID               : UUID @Core.Computed;
+        recordNumber     : String(10);
+        partnerID        : String;
+        workDate         : Date;
+        workDuration     : Time;
+        projectReference : String(50);
+        matchScore       : Decimal;
+        status           : Association to one TimesheetStatuses;
+        statusReason     : Association to one TimesheetStatusReasons;
 }

@@ -5,7 +5,7 @@ const log = require('cf-nodejs-logging-support');
 class ProcessingEngine {
     constructor() {
         this.jobActive = false;
-        this.checkQry = SELECT.one`count(RecordKey) as rowCount`.from`Timesheet`.where`Status_code = 'CREA'`;
+        this.checkQry = SELECT.one`count(ID) as rowCount`.from`Timesheets`.where`status_code = 'CREA'`;
     }
 
     /**

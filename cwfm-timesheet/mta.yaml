@@ -113,6 +113,12 @@ resources:
       service-plan: broker
       service-keys:
         - name: cwfm-timesheet-xsuaa-key
+      config:
+        role-collections:
+          - name: "CWFM-TimesheetAdmin"
+            description: "CWFM: Manage Timesheets"
+            role-template-references:
+              - $XSAPPNAME.Admin
 
   # ------------- JOB SCHEDULER SERVICE -------------------
   - name: cwfm-timesheet-job-scheduler
