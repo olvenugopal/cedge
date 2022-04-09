@@ -77,6 +77,10 @@ modules:
           forwardAuthToken: true
           strictSSL: false
           url: ~{srv-url}
+    properties:
+      SAP_JWT_TRUST_ACL:
+        - clientid: "*"
+          identityzone: "*"
 
 resources:
   # ------------------- DB RESOURCE -----------------------
@@ -114,6 +118,8 @@ resources:
       service-keys:
         - name: cwfm-timesheet-xsuaa-key
       config:
+        tenant-mode: dedicated
+        xsappname: cwfm-timesheet-uaa
         role-collections:
           - name: "CWFM-TimesheetAdmin"
             description: "CWFM: Manage Timesheets"
@@ -129,6 +135,9 @@ resources:
       service-plan: lite
       config:
         enable-xsuaa-support: true
+        xsuaa_instance_name: cwfm-timesheet-xsuaa
+        xs-security:
+          xsappname: cwfm-timesheet-uaa
 
   # -------------- APP LOGGING SERVICE --------------------
   - name: cwfm-timesheet-app-log
