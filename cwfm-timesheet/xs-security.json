@@ -1,5 +1,5 @@
 {
-    "xsappname": "cwfm-timesheet-approuter",
+    "xsappname": "cwfm-timesheet-uaa",
     "tenant-mode": "dedicated",
     "scopes": [
         {
@@ -16,7 +16,5 @@
             "scope-references": ["$XSAPPNAME.Admin"]
         }
     ],
-    "authorities": [
-        "$XSAPPNAME.Admin"
-    ]
+    "authorities": ["$XSAPPNAME.Admin"]
 }
