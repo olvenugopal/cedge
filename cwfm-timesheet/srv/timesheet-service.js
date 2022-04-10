@@ -25,8 +25,8 @@ class TimesheetService extends cds.ApplicationService {
         /**
          * After CREATE of Timesheets
          */
-        this.after(['CREATE'], 'Timesheets', async (results, req) => {
-            log.info("[CWFM] Entered Event handler 'AfterCreate' of Timesheets");
+        this.after(['CREATE', 'UPDATE'], 'Timesheets', async (results, req) => {
+            log.info("[CWFM] Entered Event handler 'AfterCreate(Update)' of Timesheets");
             //console.log('The ID of the user is %s', req.user.id);
             //let a = req.user;
             //if (req.user.is('authenticated')) { console.log('The user is authenticated'); }
