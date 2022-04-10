@@ -1,6 +1,6 @@
-code;name
-CREA;Created
-PEND;PendingApproval
-PROC;Processed
-REJE;Rejected
-EROR;Error
+code;name;descr
+CREA;Created;Created
+PEND;PendingApproval;Pending Approval
+PROC;Processed;Processed
+REJE;Rejected;Rejected
+EROR;Error;Error

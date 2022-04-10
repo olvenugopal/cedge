@@ -35,7 +35,7 @@
                     "action": "display",
                     "title": "{{flpTitle}}",
                     "subTitle": "{{flpSubtitle}}",
-                    "icon": "sap-icon://SAP-icons-TNT/start-timer-event"                    
+                    "icon": "sap-icon://customer-history"                    
                 }
             }
         }
@@ -43,12 +43,12 @@
     "sap.ui": {
         "technology": "UI5",
         "icons": {
-            "icon": "sap-icon://SAP-icons-TNT/start-timer-event",
-            "favIcon": "sap-icon://SAP-icons-TNT/start-timer-event",
-            "phone": "sap-icon://SAP-icons-TNT/start-timer-event",
-            "phone@2": "sap-icon://SAP-icons-TNT/start-timer-event",
-            "tablet": "sap-icon://SAP-icons-TNT/start-timer-event",
-            "tablet@2": "sap-icon://SAP-icons-TNT/start-timer-event"
+            "icon": "sap-icon://customer-history",
+            "favIcon": "sap-icon://customer-history",
+            "phone": "sap-icon://customer-history",
+            "phone@2": "sap-icon://customer-history",
+            "tablet": "sap-icon://customer-history",
+            "tablet@2": "sap-icon://customer-history"
         },
         "deviceTypes": {
             "desktop": true,

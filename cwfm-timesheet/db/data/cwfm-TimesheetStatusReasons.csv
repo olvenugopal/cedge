@@ -1,4 +1,5 @@
-code;name
-BP01;InvalidPartner
-BP02;PartnerArchived
-BP03;BPStatInvalid
+code;name;descr
+ ;<NotApplicable>;<Not Applicable>
+BP01;InvalidPartner;Invalid Partner
+BP02;PartnerArchived;Partner Archived
+BP03;BPStatInvalid;BP Status - Invalid
