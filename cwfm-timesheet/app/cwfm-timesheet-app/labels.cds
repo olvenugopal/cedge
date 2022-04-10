@@ -8,6 +8,6 @@ annotate cwfm.Timesheets with @title :          'Timesheet' {
     workDuration     @title          :          'Work Duration';
     projectReference @title          :          'Project';
     matchScore       @title          :          'Match Score';
-    status           @title          :          'Status';
-    statusReason     @title          :          'Status Reason';
+    status           @title          :          'Status'  @Common.Text : status.descr  @Common.TextArrangement              : #TextOnly;
+    statusReason     @title          :          'Status Reason'  @Common.Text : statusReason.descr  @Common.TextArrangement : #TextOnly;
 }

@@ -26,7 +26,7 @@
         },
         "crossNavigation": {
             "inbounds": {
-                "cap-tutorial-feprojectui-inbound": {
+                "cwfm-timesheet-ui-inbound": {
                     "signature": {
                         "parameters": {},
                         "additionalParameters": "allowed"
@@ -35,7 +35,7 @@
                     "action": "display",
                     "title": "{{flpTitle}}",
                     "subTitle": "{{flpSubtitle}}",
-                    "icon": ""
+                    "icon": "sap-icon://SAP-icons-TNT/start-timer-event"                    
                 }
             }
         }
@@ -43,12 +43,12 @@
     "sap.ui": {
         "technology": "UI5",
         "icons": {
-            "icon": "",
-            "favIcon": "",
-            "phone": "",
-            "phone@2": "",
-            "tablet": "",
-            "tablet@2": ""
+            "icon": "sap-icon://SAP-icons-TNT/start-timer-event",
+            "favIcon": "sap-icon://SAP-icons-TNT/start-timer-event",
+            "phone": "sap-icon://SAP-icons-TNT/start-timer-event",
+            "phone@2": "sap-icon://SAP-icons-TNT/start-timer-event",
+            "tablet": "sap-icon://SAP-icons-TNT/start-timer-event",
+            "tablet@2": "sap-icon://SAP-icons-TNT/start-timer-event"
         },
         "deviceTypes": {
             "desktop": true,
@@ -110,8 +110,9 @@
                         "settings": {
                             "entitySet": "Timesheets",
                             "variantManagement": "Page",
+                            "initialLoad": true,
                             "navigation": {
-                                "Timesheet": {
+                                "Timesheets": {
                                     "detail": {
                                         "route": "TimesheetObjectPage"
                                     }
