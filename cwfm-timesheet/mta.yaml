@@ -1,14 +1,16 @@
 ## Generated mta.yaml based on template version 0.4.0
-## appName = cwfm-timesheet
+## appName = cwfm-timesheet-app
 ## language=nodejs; multitenant=false
-## approuter=
+## approuter= cwfm-timesheet-approuter
 _schema-version: "3.1"
+
 ID: cwfm-timesheet
 description: CAP nodejs based Timesheet Application
 version: 1.0.0
 parameters:
+  appname: cwfm-timesheet-app
+  deploy_mode: html5-repo
   enable-parallel-deployments: true
-
 build-parameters:
   before-all:
     - builder: custom
@@ -37,9 +39,12 @@ modules:
           srv-url: ${default-url}
     parameters:
       buildpack: nodejs_buildpack
+      host: ${appname}
     build-parameters:
       builder: npm-ci
-      ignore: ["node_modules/"]
+      ignore: 
+        - node_modules/
+        - .env
 
   # ----------- HDI DEPLOYER SIDE-CAR MODULE --------------
   - name: cwfm-timesheet-db-deployer
@@ -58,6 +63,66 @@ modules:
           service: ~{the-service-name}
     parameters:
       buildpack: nodejs_buildpack
+
+  # ---------------- DESTINATION CONTENT ------------------
+  - name: cwfm-timesheet-destination-content
+    type: com.sap.application.content
+    requires:
+      - name: cwfm-timesheet-destination-service
+        parameters:
+          content-target: true
+      - name: cwfm-timesheet-repo-host
+        parameters:
+          service-key:
+            name: cwfm-timesheet-repo-host-key
+      - name: cwfm-timesheet-xsuaa
+        parameters:
+          service-key:
+            name: cwfm-timesheet-xsuaa-key
+    parameters:
+      content:
+        instance:
+          destinations:
+            - Name: cwfm-timesheet-managed-approuter_cwfm-timesheet-repo-host
+              ServiceInstanceName: cwfm-timesheet-html5-service
+              ServiceKeyName: cwfm-timesheet-repo-host-key
+              sap.cloud.service: cwfm-timesheet-managed-approuter
+            - Authentication: OAuth2UserTokenExchange
+              Name: cwfm-timesheet-managed-approuter_cwfm-timesheet-xsuaa
+              ServiceInstanceName: cwfm-timesheet-xsuaa
+              ServiceKeyName: cwfm-timesheet-xsuaa-key
+              sap.cloud.service: cwfm-timesheet-managed-approuter
+          existing_destinations_policy: ignore
+    build-parameters:
+      no-source: true
+
+  # -------------------- APP CONTENT ----------------------
+  - name: cwfm-timesheet-app-content
+    type: com.sap.application.content
+    path: .
+    requires:
+      - name: cwfm-timesheet-repo-host
+        parameters:
+          content-target: true
+    build-parameters:
+      build-result: resources
+      requires:
+        - artifacts:
+            - cwfm-timesheet-app.zip
+          name: cwfm-timesheet-app
+          target-path: resources/
+
+  # ------------------- TIMESHEET APP ---------------------
+  - name: cwfm-timesheet-app
+    type: html5
+    path: app/cwfm-timesheet-app
+    build-parameters:
+      build-result: dist
+      builder: custom
+      commands:
+        - npm install
+        - npm run build:cf
+      supported-platforms: []
 
   # ----------------- APP ROUTER MODULE -------------------
   - name: cwfm-timesheet-approuter
@@ -144,4 +209,39 @@ resources:
     type: org.cloudfoundry.managed-service
     parameters:
       service: application-logs
+      service-plan: lite
+
+  # ------------ APP REPOSITORY HOST ----------------------
+  - name: cwfm-timesheet-repo-host
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: html5-apps-repo
+      service-name: cwfm-timesheet-html5-service
+      service-plan: app-host
+
+  # ------------ DESTINATION SERVICE ----------------------
+  - name: cwfm-timesheet-destination-service
+    type: org.cloudfoundry.managed-service
+    parameters:
+      config:
+        HTML5Runtime_enabled: true
+        init_data:
+          instance:
+            destinations:
+              - Authentication: NoAuthentication
+                Name: ui5
+                ProxyType: Internet
+                Type: HTTP
+                URL: https://ui5.sap.com
+              - Authentication: NoAuthentication
+                Name: cwfm-timesheet-api
+                ProxyType: Internet
+                Type: HTTP
+                URL: https://${appname}.${default-domain}
+                HTML5.DynamicDestination: true
+                HTML5.ForwardAuthToken: true
+            existing_destinations_policy: update
+        version: 1.0.0
+      service: destination
+      service-name: cwfm-timesheet-destination-service
       service-plan: lite
