@@ -3,9 +3,9 @@
     "authenticationMethod": "route",
     "routes": [
         {
-            "authenticationType": "xsuaa",
-            "csrfProtection": true,
             "source": "^/service/(.*)",
+            "csrfProtection": true,
+            "authenticationType": "xsuaa",
             "destination": "cwfm-timesheet-api"
         },
         {
@@ -23,8 +23,8 @@
         {
             "source": "^(.*)$",
             "target": "$1",
-            "service": "html5-apps-repo-rt",
-            "authenticationType": "xsuaa"
+            "authenticationType": "xsuaa",
+            "service": "html5-apps-repo-rt"
         }
     ]
 }

@@ -1,14 +1,16 @@
 ## Generated mta.yaml based on template version 0.4.0
-## appName = cwfm-timesheet
+## appName = cwfm-timesheet-app
 ## language=nodejs; multitenant=false
-## approuter=
+## approuter= cwfm-timesheet-approuter
 _schema-version: "3.1"
+
 ID: cwfm-timesheet
 description: CAP nodejs based Timesheet Application
 version: 1.0.0
 parameters:
+  appname: cwfm-timesheet-app
+  deploy_mode: html5-repo
   enable-parallel-deployments: true
-
 build-parameters:
   before-all:
     - builder: custom
@@ -37,9 +39,12 @@ modules:
           srv-url: ${default-url}
     parameters:
       buildpack: nodejs_buildpack
+      host: ${appname}
     build-parameters:
       builder: npm-ci
-      ignore: ["node_modules/"]
+      ignore: 
+        - node_modules/
+        - .env
 
   # ----------- HDI DEPLOYER SIDE-CAR MODULE --------------
   - name: cwfm-timesheet-db-deployer
@@ -103,12 +108,12 @@ modules:
       build-result: resources
       requires:
         - artifacts:
-            - cwfmcwfmtimesheetapp.zip
-          name: cwfmcwfmtimesheetapp
+            - cwfm-timesheet-app.zip
+          name: cwfm-timesheet-app
           target-path: resources/
 
   # ------------------- TIMESHEET APP ---------------------
-  - name: cwfmcwfmtimesheetapp
+  - name: cwfm-timesheet-app
     type: html5
     path: app/cwfm-timesheet-app
     build-parameters:

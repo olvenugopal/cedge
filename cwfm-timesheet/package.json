@@ -17,12 +17,15 @@
     },
     "devDependencies": {
         "@sap/hdi-deploy": "^4.2.3",
-        "sqlite3": "^5.0.2"
+        "@sap/ux-specification": "^1.96.6",
+        "sqlite3": "^5.0.2",
+        "rimraf": "3.0.2"
     },
     "scripts": {
         "start": "cds run",
-        "build": "cds build/all --clean",
-        "deploy": "cds deploy"
+        "build": "rimraf resources mta_archives && mbt build --mtar archive",
+        "deploy": "cf deploy mta_archives/archive.mtar --retries 1",
+        "undeploy": "cf undeploy cwfm-timesheet --delete-services --delete-service-keys"
     },
     "eslintConfig": {
         "extends": "eslint:recommended",
@@ -61,5 +64,8 @@
         "hana": {
             "deploy-format": "hdbtable"
         }
-    }
+    },
+    "sapux": [
+        "app/cwfm-timesheet-app"
+    ]
 }

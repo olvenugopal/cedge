@@ -96,7 +96,7 @@
                     "target": "TimesheetList"
                 },
                 {
-                    "pattern": "Timesheet({key}):?query:",
+                    "pattern": "Timesheets({key}):?query:",
                     "name": "TimesheetObjectPage",
                     "target": "TimesheetObjectPage"
                 }
