@@ -33,13 +33,14 @@ entity TimesheetStatusReasons : sap.common.CodeList {
 // Timesheet Datamodel
 //
 entity Timesheets : managed {
-    key ID               : UUID @Core.Computed;
-        recordNumber     : String(10);
-        partnerID        : String;
-        workDate         : Date;
-        workDuration     : Time;
-        projectReference : String(50);
-        matchScore       : Decimal;
-        status           : Association to one TimesheetStatuses;
-        statusReason     : Association to one TimesheetStatusReasons;
+    key ID                  : UUID;
+        recordNumber        : String(10);
+        partnerID           : String;
+        workDate            : Date;
+        workDuration        : Time;
+        projectReference    : String(50);
+        matchScore          : Decimal;
+        status              : Association to one TimesheetStatuses;
+        statusReason        : Association to one TimesheetStatusReasons;
+        virtual criticality : Integer; //  1: Red, 2: Yellow, 3: Green, 0: Unknown;
 }

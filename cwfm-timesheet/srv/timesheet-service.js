@@ -45,6 +45,21 @@ class TimesheetService extends cds.ApplicationService {
             prc.wait(Number(process.env.prc_delay_time));
         });
 
+        /**
+         * Set the criticality value for each of the rows
+         */
+        this.after(['READ'], 'Timesheets', (each) => {
+            if (each.matchScore > 0 && each.matchScore <= 0.5) {
+                each.criticality = 1;
+            }
+            else if (each.matchScore > 0.5 && each.matchScore <= 0.85) {
+                each.criticality = 2;
+            }
+            else if (each.matchScore > 0.85) {
+                each.criticality = 3;
+            }
+        });
+
         // Add base class's handlers. Handlers registered above go first.
         return super.init();
     }

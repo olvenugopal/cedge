@@ -18,7 +18,9 @@ LineItem : [
     { $Type : 'UI.DataField', Label : 'Partner ID',         Value : partnerID },
     { $Type : 'UI.DataField', Label : 'Work Date',          Value : workDate },
     { $Type : 'UI.DataField', Label : 'Work Duration',      Value : workDuration },
-    { $Type : 'UI.DataField', Label : 'Project Reference',  Value : projectReference }
+    { $Type : 'UI.DataField', Label : 'Project Reference',  Value : projectReference },
+    { $Type : 'UI.DataField', Label : 'Match Score',        Value : matchScore, Criticality : criticality },
+    { $Type : 'UI.DataField', Label : 'Created On',         Value : createdAt }
 ],
 
 FieldGroup#Group1 : {
@@ -29,7 +31,8 @@ FieldGroup#Group1 : {
         { $Type : 'UI.DataField', Label : 'Work Date',          Value : workDate },
         { $Type : 'UI.DataField', Label : 'Work Duration',      Value : workDuration },
         { $Type : 'UI.DataField', Label : 'Project Reference',  Value : projectReference },
-        { $Type : 'UI.DataField', Label : 'Match Score',        Value : matchScore }
+        { $Type : 'UI.DataField', Label : 'Match Score',        Value : matchScore, Criticality : criticality },
+        { $Type : 'UI.DataField', Label : 'Created On',         Value : createdAt }
     ],
 },
 
