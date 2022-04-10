@@ -19,20 +19,24 @@ class TimesheetService extends cds.ApplicationService {
          * Before CREATE of Timesheets
          */
         this.before(['CREATE'], 'Timesheets', async req => {
+            results.status_code = 'CREA';
             log.info("[CWFM] Entered Event handler 'BeforeCreate' of Timesheets");
         });
 
         /**
          * After CREATE of Timesheets
          */
-        this.after(['CREATE', 'UPDATE'], 'Timesheets', async (results, req) => {
-            log.info("[CWFM] Entered Event handler 'AfterCreate(Update)' of Timesheets");
-            //console.log('The ID of the user is %s', req.user.id);
-            //let a = req.user;
-            //if (req.user.is('authenticated')) { console.log('The user is authenticated'); }
-            //if (!req.user.is('authenticated')) { console.log('The user is not authenticated'); }
-            //if (req.user.is('admin')) { console.log('The role of user is admin'); }
-            //if (!req.user.is('admin')) { console.log('The role of user is not admin'); }
+        this.after(['CREATE'], 'Timesheets', async (results, req) => {
+            log.info("[CWFM] Entered Event handler 'AfterCreate' of Timesheets");
+            prc.triggerJob();
+        });
+
+        /**
+         * After UPDATE of Timesheets
+         */
+        this.after(['UPDATE'], 'Timesheets', async (results, req) => {
+            log.info("[CWFM] Entered Event handler 'AfterUpdate' of Timesheets");
+            results.status_code = 'UPDT';
             prc.triggerJob();
         });
 
@@ -49,14 +53,43 @@ class TimesheetService extends cds.ApplicationService {
          * Set the criticality value for each of the rows
          */
         this.after(['READ'], 'Timesheets', (each) => {
-            if (each.matchScore > 0 && each.matchScore <= 0.5) {
+            if (each.matchScore > 0 && each.matchScore <= 0.6) {
                 each.criticality = 1;
             }
-            else if (each.matchScore > 0.5 && each.matchScore <= 0.85) {
+            else if (each.matchScore > 0.6 && each.matchScore <= 0.9) {
                 each.criticality = 2;
             }
-            else if (each.matchScore > 0.85) {
+            else if (each.matchScore > 0.9) {
                 each.criticality = 3;
+            }
+            else {
+                each.criticality = 0;
+            }
+        });
+
+        /**
+         * Approve Action - Set status accordingly
+         */
+        this.on('approveTimesheet', (req) => {
+            if (req._target.status_code === 'PEND') {
+                UPDATE(req._target).with({ status_code: 'APPR' });
+            }
+            else {
+                req.error(400, `Please select a Timesheet in status 'Pending Approval'`);
+            }
+        });
+
+        /**
+         * Reject Action - Set status accordingly
+         */
+        this.on('rejectTimesheet', async (req) => {
+            console.log("[CWFM] Entered Action handler 'rejectTimesheet'");
+            let ts = await SELECT.one`status_code as status_code`.from(req._target);
+            if (ts.status_code === 'PEND') {
+                UPDATE(req._target).with({ status_code: 'REJE' });
+            }
+            else {
+                req.error(400, `Please select a Timesheet in status 'Pending Approval'`);
             }
         });
 

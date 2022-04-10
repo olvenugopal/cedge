@@ -14,7 +14,8 @@ HeaderInfo : {
 },
 
 LineItem : [
-    { $Type : 'UI.DataFieldForAction', Action : 'TimesheetService.processTimesheets', Label : 'Process' },    
+    { $Type : 'UI.DataFieldForAction', Action : 'TimesheetService.approveTimesheet', Label : 'Approve' },    
+    { $Type : 'UI.DataFieldForAction', Action : 'TimesheetService.rejectTimesheet', Label : 'Reject' },
     { $Type : 'UI.DataField', Label : 'Record ID',          Value : recordNumber },
     { $Type : 'UI.DataField', Label : 'Partner ID',         Value : partnerID },
     { $Type : 'UI.DataField', Label : 'Work Date',          Value : workDate },

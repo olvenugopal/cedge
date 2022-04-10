@@ -13,9 +13,11 @@ using {
 entity TimesheetStatuses : sap.common.CodeList {
     key code : String(4) enum {
             created         = 'CREA';
+            updated         = 'UPDT';
             error           = 'EROR';
             pendingApproval = 'PEND';
-            processed       = 'PROC';
+            inProcess       = 'INPR';
+            approved        = 'APPR';
             rejected        = 'REJE';
         };
 }

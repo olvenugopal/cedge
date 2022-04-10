@@ -1,6 +1,8 @@
 code;name;descr
 CREA;Created;Created
-PEND;PendingApproval;Pending Approval
-PROC;Processed;Processed
-REJE;Rejected;Rejected
+UPDT;Updated;Updated
 EROR;Error;Error
+PEND;PendingApproval;Pending Approval
+INPR;InProcess;InProcess
+APPR;Approved;Approved
+REJE;Rejected;Rejected
