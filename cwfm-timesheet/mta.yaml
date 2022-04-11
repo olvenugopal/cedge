@@ -186,7 +186,7 @@ resources:
         - name: cwfm-timesheet-xsuaa-key
       config:
         tenant-mode: dedicated
-        xsappname: cwfm-timesheet-uaa-${space}
+        xsappname: cwfm-timesheet-uaa
         role-collections:
           - name: "CWFM-TimesheetAdmin"
             description: "CWFM: Manage Timesheets"
