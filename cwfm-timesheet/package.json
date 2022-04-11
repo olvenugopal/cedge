@@ -11,6 +11,7 @@
         "@sap/xsenv": "^3.2.1",
         "@sap/xssec": "^3.2.7",
         "cf-nodejs-logging-support": "^6.12.0",
+        "@sap/audit-logging": "^5.1.0",
         "express": "^4",
         "hdb": "^0.18.3",
         "passport": "^0.5.2"
@@ -59,10 +60,20 @@
             },
             "uaa": {
                 "kind": "xsuaa"
+            },
+            "audit-log": {
+                "[development]": {
+                    "credentials": {
+                        "logToConsole": true
+                    }
+                }
             }
         },
         "hana": {
             "deploy-format": "hdbtable"
+        },
+        "features": {
+            "audit_personal_data": false
         }
     },
     "sapux": [
