@@ -35,7 +35,7 @@ class ProcessingEngine {
         if (this.jobActive) { return; }
         let checkResult = await cds.run(this.checkQry);
         if (checkResult.rowCount) { // Are there records to be processed? then submit the job
-            const interval = 1000;
+            const interval = 1;
             cds.spawn({ after: interval /* ms */ }, this.jobCallback);
             this.jobActive = true;
             log.info("[CWFM] A Job is submitted (triggers in %ims) to process %i timesheets", interval, checkResult.rowCount);

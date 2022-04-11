@@ -18,9 +18,9 @@ class TimesheetService extends cds.ApplicationService {
         /**
          * Before CREATE of Timesheets
          */
-        this.before(['CREATE'], 'Timesheets', async req => {
-            results.status_code = 'CREA';
+        this.before(['CREATE'], 'Timesheets', async (req) => {
             log.info("[CWFM] Entered Event handler 'BeforeCreate' of Timesheets");
+            req.data.status_code = 'CREA';
         });
 
         /**
