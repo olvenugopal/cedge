@@ -19,20 +19,24 @@ class TimesheetService extends cds.ApplicationService {
          * Before CREATE of Timesheets
          */
         this.before(['CREATE'], 'Timesheets', async req => {
+            results.status_code = 'CREA';
             log.info("[CWFM] Entered Event handler 'BeforeCreate' of Timesheets");
         });
 
         /**
          * After CREATE of Timesheets
          */
-        this.after(['CREATE', 'UPDATE'], 'Timesheets', async (results, req) => {
-            log.info("[CWFM] Entered Event handler 'AfterCreate(Update)' of Timesheets");
-            //console.log('The ID of the user is %s', req.user.id);
-            //let a = req.user;
-            //if (req.user.is('authenticated')) { console.log('The user is authenticated'); }
-            //if (!req.user.is('authenticated')) { console.log('The user is not authenticated'); }
-            //if (req.user.is('admin')) { console.log('The role of user is admin'); }
-            //if (!req.user.is('admin')) { console.log('The role of user is not admin'); }
+        this.after(['CREATE'], 'Timesheets', async (results, req) => {
+            log.info("[CWFM] Entered Event handler 'AfterCreate' of Timesheets");
+            prc.triggerJob();
+        });
+
+        /**
+         * After UPDATE of Timesheets
+         */
+        this.after(['UPDATE'], 'Timesheets', async (results, req) => {
+            log.info("[CWFM] Entered Event handler 'AfterUpdate' of Timesheets");
+            await UPDATE(req.target, results.ID).with({ status_code: 'UPDT', statusReason_code: '' });
             prc.triggerJob();
         });
 
@@ -49,14 +53,55 @@ class TimesheetService extends cds.ApplicationService {
          * Set the criticality value for each of the rows
          */
         this.after(['READ'], 'Timesheets', (each) => {
-            if (each.matchScore > 0 && each.matchScore <= 0.5) {
+            if (each.matchScore > 0 && each.matchScore <= 0.6) {
                 each.criticality = 1;
             }
-            else if (each.matchScore > 0.5 && each.matchScore <= 0.85) {
+            else if (each.matchScore > 0.6 && each.matchScore <= 0.9) {
                 each.criticality = 2;
             }
-            else if (each.matchScore > 0.85) {
+            else if (each.matchScore > 0.9) {
                 each.criticality = 3;
+            }
+            else {
+                each.criticality = 0;
+            }
+        });
+
+        /**
+         * Approve Action - Set status accordingly
+         */
+        this.on('approveTimesheet', async (req) => {
+            let guid = (req.data.ID === undefined) ? req.params[0].ID : req.data.ID;
+            let rows = await SELECT("*").from(req.target).where({ id: guid });
+            switch (rows[0].status_code) {
+                case 'PEND':
+                    await UPDATE(req.target, guid).with({ status_code: 'APPR' });
+                    break;
+                case 'APPR':
+                    req.error(200, 'Timesheet is already Approved');
+                    break;
+                default:
+                    req.error(400, `Please select a Timesheet in status 'Pending Approval'`);
+                    break;
+            }
+        });
+
+        /**
+         * Reject Action - Set status accordingly
+         */
+        this.on('rejectTimesheet', async (req) => {
+            let guid = (req.data.ID === undefined) ? req.params[0].ID : req.data.ID;
+            let rows = await SELECT("*").from(req.target).where({ id: guid });
+            switch (rows[0].status_code) {
+                case 'PEND':
+                    await UPDATE(req.target, guid).with({ status_code: 'REJE' });
+                    break;
+                case 'REJE':
+                    req.error(200, 'Timesheet is already Rejected');
+                    break;
+                default:
+                    req.error(400, `Please select a Timesheet in status 'Pending Approval'`);
+                    break;
             }
         });
 
