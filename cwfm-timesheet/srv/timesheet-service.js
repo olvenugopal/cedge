@@ -36,6 +36,8 @@ class TimesheetService extends cds.ApplicationService {
          */
         this.after(['UPDATE'], 'Timesheets', async (results, req) => {
             log.info("[CWFM] Entered Event handler 'AfterUpdate' of Timesheets");
+            //const AuditLogService = await cds.connect.to('audit-log');
+            //await AuditLogService.emit('TimesheetUpdated', { results });
             await UPDATE(req.target, results.ID).with({ status_code: 'UPDT', statusReason_code: '' });
             prc.triggerJob();
         });

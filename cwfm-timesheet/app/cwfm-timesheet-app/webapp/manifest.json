@@ -154,6 +154,6 @@
     },
     "sap.cloud": {
         "public": true,
-        "service": "cwfm-timesheet-managed-approuter"
+        "service": "cwfm.timesheet"
     }    
 }

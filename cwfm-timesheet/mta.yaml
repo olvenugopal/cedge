@@ -44,7 +44,7 @@ modules:
       host: ${appname}
     build-parameters:
       builder: npm-ci
-      ignore: 
+      ignore:
         - node_modules/
         - .env
 
@@ -88,12 +88,12 @@ modules:
             - Name: cwfm-timesheet-managed-approuter_cwfm-timesheet-repo-host
               ServiceInstanceName: cwfm-timesheet-html5-service
               ServiceKeyName: cwfm-timesheet-repo-host-key
-              sap.cloud.service: cwfm-timesheet-managed-approuter
+              sap.cloud.service: cwfm.timesheet
             - Authentication: OAuth2UserTokenExchange
               Name: cwfm-timesheet-managed-approuter_cwfm-timesheet-xsuaa
               ServiceInstanceName: cwfm-timesheet-xsuaa
               ServiceKeyName: cwfm-timesheet-xsuaa-key
-              sap.cloud.service: cwfm-timesheet-managed-approuter
+              sap.cloud.service: cwfm.timesheet
           existing_destinations_policy: ignore
     build-parameters:
       no-source: true

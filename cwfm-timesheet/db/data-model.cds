@@ -43,6 +43,7 @@ entity Timesheets : managed {
         projectReference    : String(50);
         matchScore          : Decimal;
         status              : Association to one TimesheetStatuses;
+        @assert.integrity : false
         statusReason        : Association to one TimesheetStatusReasons;
         virtual criticality : Integer; //  1: Red, 2: Yellow, 3: Green, 0: Unknown;
 }
