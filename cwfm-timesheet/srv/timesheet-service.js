@@ -36,7 +36,7 @@ class TimesheetService extends cds.ApplicationService {
          */
         this.after(['UPDATE'], 'Timesheets', async (results, req) => {
             log.info("[CWFM] Entered Event handler 'AfterUpdate' of Timesheets");
-            results.status_code = 'UPDT';
+            await UPDATE(req.target, results.ID).with({ status_code: 'UPDT', statusReason_code: '' });
             prc.triggerJob();
         });
 
@@ -70,12 +70,19 @@ class TimesheetService extends cds.ApplicationService {
         /**
          * Approve Action - Set status accordingly
          */
-        this.on('approveTimesheet', (req) => {
-            if (req._target.status_code === 'PEND') {
-                UPDATE(req._target).with({ status_code: 'APPR' });
-            }
-            else {
-                req.error(400, `Please select a Timesheet in status 'Pending Approval'`);
+        this.on('approveTimesheet', async (req) => {
+            let guid = (req.data.ID === undefined) ? req.params[0].ID : req.data.ID;
+            let rows = await SELECT("*").from(req.target).where({ id: guid });
+            switch (rows[0].status_code) {
+                case 'PEND':
+                    await UPDATE(req.target, guid).with({ status_code: 'APPR' });
+                    break;
+                case 'APPR':
+                    req.error(200, 'Timesheet is already Approved');
+                    break;
+                default:
+                    req.error(400, `Please select a Timesheet in status 'Pending Approval'`);
+                    break;
             }
         });
 
@@ -83,13 +90,18 @@ class TimesheetService extends cds.ApplicationService {
          * Reject Action - Set status accordingly
          */
         this.on('rejectTimesheet', async (req) => {
-            console.log("[CWFM] Entered Action handler 'rejectTimesheet'");
-            let ts = await SELECT.one`status_code as status_code`.from(req._target);
-            if (ts.status_code === 'PEND') {
-                UPDATE(req._target).with({ status_code: 'REJE' });
-            }
-            else {
-                req.error(400, `Please select a Timesheet in status 'Pending Approval'`);
+            let guid = (req.data.ID === undefined) ? req.params[0].ID : req.data.ID;
+            let rows = await SELECT("*").from(req.target).where({ id: guid });
+            switch (rows[0].status_code) {
+                case 'PEND':
+                    await UPDATE(req.target, guid).with({ status_code: 'REJE' });
+                    break;
+                case 'REJE':
+                    req.error(200, 'Timesheet is already Rejected');
+                    break;
+                default:
+                    req.error(400, `Please select a Timesheet in status 'Pending Approval'`);
+                    break;
             }
         });
 

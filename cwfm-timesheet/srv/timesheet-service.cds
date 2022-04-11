@@ -1,8 +1,13 @@
 using {cwfm} from '../db/data-model';
 
-service TimesheetService @( path : '/service', requires : 'authenticated-user') {
+service TimesheetService @(
+    path     : '/service',
+    requires : 'authenticated-user'
+) {
     entity Timesheets             as projection on cwfm.Timesheets actions {
+        @(requires : 'Admin')
         action approveTimesheet();
+        @(requires : 'Admin')
         action rejectTimesheet();
     };
 
