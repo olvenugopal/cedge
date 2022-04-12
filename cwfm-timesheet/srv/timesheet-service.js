@@ -3,6 +3,8 @@
 const cds = require('@sap/cds');
 const prc = require('./processing-engine');
 const log = require('cf-nodejs-logging-support');
+const ntf = require('./timesheet-notify');
+const uaa = require('@sap/xsenv');
 
 class TimesheetService extends cds.ApplicationService {
 
@@ -13,6 +15,20 @@ class TimesheetService extends cds.ApplicationService {
          */
         this.on('processTimesheets', async req => {
             log.info("[CWFM] Entered Action handler for 'processTimesheets'");
+        });
+
+        /**
+         * Callback from Notification Service - Single Entity
+         */
+        this.on('ExecuteAction', async req => {
+            log.info("[CWFM] Entered Action handler for 'ExecuteAction'");
+        });
+
+        /**
+         * Callback from Notification Service - Bulk Mode
+         */
+        this.on('BulkActionByHeader', async req => {
+            log.info("[CWFM] Entered Action handler for 'BulkActionByHeader'");
         });
 
         /**
@@ -73,6 +89,7 @@ class TimesheetService extends cds.ApplicationService {
          * Approve Action - Set status accordingly
          */
         this.on('approveTimesheet', async (req) => {
+            /******************************************************************
             let guid = (req.data.ID === undefined) ? req.params[0].ID : req.data.ID;
             let rows = await SELECT("*").from(req.target).where({ id: guid });
             switch (rows[0].status_code) {
@@ -86,6 +103,8 @@ class TimesheetService extends cds.ApplicationService {
                     req.error(400, `Please select a Timesheet in status 'Pending Approval'`);
                     break;
             }
+            ******************************************************************/
+            await this.notify();
         });
 
         /**
@@ -109,6 +128,17 @@ class TimesheetService extends cds.ApplicationService {
 
         // Add base class's handlers. Handlers registered above go first.
         return super.init();
+    }
+
+    async notify() {
+        console.log("Entered the method 'Notify'");
+        await ntf.publishTimesheetApprovalNotification({
+            notificationId: "f7043c2e-9f55-47f9-bb4b-7124e7addb51",
+            recordNumber: "50000001",
+            partnerID: "100000001",
+            workDate: "2022-01-02",
+            recipients: ["lakshmi.venugopal.ogirala@sap.com"]
+        });
     }
 }
 module.exports = TimesheetService

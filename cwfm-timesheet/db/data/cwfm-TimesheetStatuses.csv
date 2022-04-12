@@ -3,6 +3,6 @@ CREA;Created;Created
 UPDT;Updated;Updated
 EROR;Error;Error
 PEND;PendingApproval;Pending Approval
-INPR;InProcess;InProcess
+PROC;Processed;Processed
 APPR;Approved;Approved
 REJE;Rejected;Rejected

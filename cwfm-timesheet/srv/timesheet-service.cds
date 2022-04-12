@@ -14,4 +14,6 @@ service TimesheetService @(
     entity TimesheetStatuses      as projection on cwfm.TimesheetStatuses;
     entity TimesheetStatusReasons as projection on cwfm.TimesheetStatusReasons;
     action processTimesheets();
+    action ExecuteAction();
+    action BulkActionByHeader();
 }
