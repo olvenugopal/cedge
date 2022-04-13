@@ -26,12 +26,15 @@ modules:
     type: nodejs
     path: gen/srv
     properties:
-      prc_delay_time: 0
+      response_delay: 0
+      submit_job_after: 100
+      notif_recipient: "lakshmi.venugopal.ogirala@sap.com"
     requires:
       - name: cwfm-timesheet-xsuaa
       - name: cwfm-timesheet-db
       - name: cwfm-timesheet-job-scheduler
       - name: cwfm-timesheet-app-log
+      - name: cwfm-timesheet-notify
       - name: cwfm-timesheet-autoscaler
         parameters:
           path: ./autoscaler.json
@@ -247,3 +250,10 @@ resources:
       service: destination
       service-name: cwfm-timesheet-destination-service
       service-plan: lite
+
+  # ----- DESTINATION SERVICE FOR NOTIFICATIONS -----------
+  - name: cwfm-timesheet-notify
+    parameters:
+      service-plan: lite
+      service: destination
+    type: org.cloudfoundry.managed-service

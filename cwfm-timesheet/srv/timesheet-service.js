@@ -3,6 +3,7 @@
 const cds = require('@sap/cds');
 const prc = require('./processing-engine');
 const log = require('cf-nodejs-logging-support');
+const uaa = require('@sap/xsenv');
 
 class TimesheetService extends cds.ApplicationService {
 
@@ -13,6 +14,20 @@ class TimesheetService extends cds.ApplicationService {
          */
         this.on('processTimesheets', async req => {
             log.info("[CWFM] Entered Action handler for 'processTimesheets'");
+        });
+
+        /**
+         * Callback from Notification Service - Single Entity
+         */
+        this.on('ExecuteAction', async req => {
+            log.info("[CWFM] Entered Action handler for 'ExecuteAction'");
+        });
+
+        /**
+         * Callback from Notification Service - Bulk Mode
+         */
+        this.on('BulkActionByHeader', async req => {
+            log.info("[CWFM] Entered Action handler for 'BulkActionByHeader'");
         });
 
         /**
@@ -47,8 +62,11 @@ class TimesheetService extends cds.ApplicationService {
          */
         this.before(['READ'], 'Timesheets', (req) => {
             log.info("[CWFM] Entered Event handler 'BeforeRead' of Timesheets");
-            log.info("[CWFM] Delay Time Config: %i", Number(process.env.prc_delay_time));
-            prc.wait(Number(process.env.prc_delay_time));
+            let delay = (process.env.response_delay === undefined) ? 0 : Number(process.env.response_delay);
+            log.info("[CWFM] Delay Time Config: %i", delay);
+            if (delay !== 0) {
+                prc.wait(delay);
+            }
         });
 
         /**
@@ -77,6 +95,7 @@ class TimesheetService extends cds.ApplicationService {
             let rows = await SELECT("*").from(req.target).where({ id: guid });
             switch (rows[0].status_code) {
                 case 'PEND':
+                case 'PROC':
                     await UPDATE(req.target, guid).with({ status_code: 'APPR' });
                     break;
                 case 'APPR':
@@ -95,6 +114,7 @@ class TimesheetService extends cds.ApplicationService {
             let guid = (req.data.ID === undefined) ? req.params[0].ID : req.data.ID;
             let rows = await SELECT("*").from(req.target).where({ id: guid });
             switch (rows[0].status_code) {
+                case 'PROC':
                 case 'PEND':
                     await UPDATE(req.target, guid).with({ status_code: 'REJE' });
                     break;

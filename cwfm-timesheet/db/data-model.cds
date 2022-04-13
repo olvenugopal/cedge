@@ -16,7 +16,7 @@ entity TimesheetStatuses : sap.common.CodeList {
             updated         = 'UPDT';
             error           = 'EROR';
             pendingApproval = 'PEND';
-            inProcess       = 'INPR';
+            processed       = 'PROC';
             approved        = 'APPR';
             rejected        = 'REJE';
         };
@@ -45,5 +45,6 @@ entity Timesheets : managed {
         status              : Association to one TimesheetStatuses;
         @assert.integrity : false
         statusReason        : Association to one TimesheetStatusReasons;
+        notificationId      : UUID;
         virtual criticality : Integer; //  1: Red, 2: Yellow, 3: Green, 0: Unknown;
 }
