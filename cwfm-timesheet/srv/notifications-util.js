@@ -49,15 +49,20 @@ class NotificationService {
     }
 
     static async postNotification(notification) {
+        console.log("Getting Destination");
         const notifServiceDest = await _getDestination(destinationName);
+        console.log("Got the Destination");
+        console.log(notification);
         const csrfHeaders = await buildCsrfHeaders(notifServiceDest, { url: notificationEndpoint });
+        console.log("Successfully build the CSRF Headers");
         const response = await executeHttpRequest(notifServiceDest, {
             url: `${notificationEndpoint}/Notifications`,
             method: "post",
             data: notification,
             headers: csrfHeaders,
         });
-        return response.data.d;
+        console.log("Successfully executed the POST method for Notifications");
+        return response.data;
     }
 }
 

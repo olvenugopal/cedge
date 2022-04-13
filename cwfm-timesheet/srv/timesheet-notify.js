@@ -1,4 +1,5 @@
 const { NotificationService } = require("./notifications-util");
+const { v4: uuidv4 } = require('uuid');
 
 const NOTIF_TYPE_KEY = "CWFMTimesheet";
 const NOTIF_TYPE_VERSION = "0.1";
@@ -37,7 +38,7 @@ function createNotificationType() {
 function createNotification({ notificationId, recordNumber, partnerID, workDate, recipients }) {
 
     return {
-        Id: notificationId,
+        //Id: (notificationId === undefined || notificationId === null) ? uuidv4() : notificationId,
         OriginId: "",
         NotificationTypeKey: NOTIF_TYPE_KEY,
         NotificationTypeVersion: NOTIF_TYPE_VERSION,
@@ -78,13 +79,14 @@ function createNotification({ notificationId, recordNumber, partnerID, workDate,
 
 async function publishTimesheetApprovalNotification(notification) {
     console.log(`Entered method: publishTimesheetApprovalNotification()`);
+    console.log(notification);
     const notifTypes = await NotificationService.getNotificationTypes();
     console.log(`Got all the Notification Types`);
     const notifType = notifTypes.find(nType => nType.NotificationTypeKey === NOTIF_TYPE_KEY && nType.NotificationTypeVersion === NOTIF_TYPE_VERSION);
     if (!notifType) {
         console.log(`Notification Type of key ${NOTIF_TYPE_KEY} and version ${NOTIF_TYPE_VERSION} was not found. Creating it...`);
         await NotificationService.postNotificationType(createNotificationType());
-    }    
+    }
     return await NotificationService.postNotification(createNotification(notification));
 }
 
