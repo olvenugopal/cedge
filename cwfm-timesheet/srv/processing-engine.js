@@ -11,13 +11,12 @@ class ProcessingEngine {
     }
 
     /**
-     * Method to process timesheets which are in 'Created' status
+     * Method to process timesheets which are in 'Created' or 'Updated' status
      */
     async processTimesheets(tx) {
         try {
             let processFn = `call "processTimesheets"( )`;
             await tx.run(processFn);
-            await tx.commit();
             log.info("[CWFM] Successfully processed the timesheets using HANA procedures");
         }
         catch (err) {
@@ -26,25 +25,25 @@ class ProcessingEngine {
     }
 
     /**
-     * Method to process timesheets which are in 'Created' status
+     * Method to process timesheets which are in 'Created' or 'Updated' status
      */
     async jobCallback(tx) {
         const prc = require('./processing-engine');
         await prc.processTimesheets(tx);
         await prc.notify();
         prc.jobActive = false;
-        await prc.triggerJob();
+        prc.triggerJob();
         return true;
     }
 
     /**
-     * Method to process timesheets which are in 'Created' status
+     * Method to process timesheets which are in 'Created' or 'Updated' status
      */
     async triggerJob() {
         if (this.jobActive) { return; }
         let checkResult = await cds.run(this.checkQry);
         if (checkResult.rowCount) { // Are there records to be processed? then submit the job
-            const interval = 2000;
+            const interval = (process.env.submit_job_after === undefined) ? 100 : Number(process.env.submit_job_after);
             cds.spawn({ after: interval /* ms */ }, this.jobCallback);
             this.jobActive = true;
             log.info("[CWFM] A Job is submitted (triggers in %ims) to process %i timesheets", interval, checkResult.rowCount);
@@ -67,13 +66,12 @@ class ProcessingEngine {
      */
     async notify() {
         console.log("Entered the method 'Notify'");
-        await this.wait(1000);
         let rows = await SELECT("*").from('Timesheets').where({ status_code: 'PROC' });
         rows.map(row => this.sendNotification(row));
     }
 
     async sendNotification(row) {
-        let recipient = (process.env.ntf_recipient === undefined) ? "lakshmi.venugopal.ogirala@sap.com" : process.env.ntf_recipient;
+        let recipient = (process.env.notif_recipient === undefined) ? "lakshmi.venugopal.ogirala@sap.com" : process.env.notif_recipient;
         let notification = {
             notificationId: (row.notificationId === undefined || row.notificationId === null) ? uuidv4() : row.notificationId,
             recordNumber: row.recordNumber,

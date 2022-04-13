@@ -26,7 +26,9 @@ modules:
     type: nodejs
     path: gen/srv
     properties:
-      prc_delay_time: 0
+      response_delay: 0
+      submit_job_after: 100
+      notif_recipient: "lakshmi.venugopal.ogirala@sap.com"
     requires:
       - name: cwfm-timesheet-xsuaa
       - name: cwfm-timesheet-db

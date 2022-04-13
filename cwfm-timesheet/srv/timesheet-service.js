@@ -62,8 +62,11 @@ class TimesheetService extends cds.ApplicationService {
          */
         this.before(['READ'], 'Timesheets', (req) => {
             log.info("[CWFM] Entered Event handler 'BeforeRead' of Timesheets");
-            log.info("[CWFM] Delay Time Config: %i", Number(process.env.prc_delay_time));
-            prc.wait(Number(process.env.prc_delay_time));
+            let delay = (process.env.response_delay === undefined) ? 0 : Number(process.env.response_delay);
+            log.info("[CWFM] Delay Time Config: %i", delay);
+            if (delay !== 0) {
+                prc.wait(delay);
+            }
         });
 
         /**
