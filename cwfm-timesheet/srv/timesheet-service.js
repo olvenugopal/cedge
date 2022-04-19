@@ -28,13 +28,24 @@ class TimesheetService extends cds.ApplicationService {
         /**
          * Callback from Notification Service - Single Entity
          */
-        this.on('ExecuteAction', async req => {
+        this.on('ExecuteAction', async (req) => {
             log.info("[CWFM] Entered Action handler for 'ExecuteAction'");
-            console.log("[CWFM] req.params value is %s", req.params[0]);
-            console.log("[CWFM] req.data value is");
-            console.log(req.data);
-            await this.setStatusForAllPending('APPR');
-            return { Success: true, MessageText: "Timesheet is Approved Successfully", DeleteOnReturn: true };
+            let response = { Success: true, MessageText: "", DeleteOnReturn: true };
+            if (req.data) {
+                log.info("[CWFM] Begin processing for ActionId: %s ", req.data.ActionId);
+                switch (req.data.ActionId) {
+                    case 'Approve':
+                        await this.setStatusForAllPending('APPR');
+                        response.MessageText = "Timesheet is Approved Successfully";
+                        break;
+
+                    case 'Reject':
+                        await this.setStatusForAllPending('REJE');
+                        response.MessageText = "Timesheet is Rejected Successfully";
+                        break;
+                }
+            }
+            return response;
         });
 
         /**

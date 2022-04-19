@@ -4,11 +4,6 @@ service TimesheetService @(
     path     : '/service',
     requires : 'authenticated-user'
 ) {
-    type execActionInput {
-        NotificationId : String;
-        ActionId       : String;
-    }
-
     type execActionOutput {
         Success        : Boolean;
         MessageText    : String;
@@ -25,6 +20,6 @@ service TimesheetService @(
     entity TimesheetStatuses      as projection on cwfm.TimesheetStatuses;
     entity TimesheetStatusReasons as projection on cwfm.TimesheetStatusReasons;
     action processTimesheets();
-    action ExecuteAction() returns execActionOutput;
+    action ExecuteAction(NotificationId : String, ActionId : String) returns execActionOutput;
     action BulkActionByHeader();
 }
