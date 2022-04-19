@@ -7,6 +7,15 @@ const uaa = require('@sap/xsenv');
 
 class TimesheetService extends cds.ApplicationService {
 
+    async setStatusForAllPending(status) {
+        let entity = cds.entities('cwfm').Timesheets;
+        let rows = await SELECT("*").from(entity).where({ status_code: 'PEND' });
+        console.log("[CWFM] Number of records to be approved/rejected: %i", rows.length);
+        for (let i = 0; i < rows.length; ++i) {
+            await UPDATE(entity, rows[i].Id).with({ status_code: status });
+        }
+    }
+
     init() {
 
         /**
@@ -21,6 +30,11 @@ class TimesheetService extends cds.ApplicationService {
          */
         this.on('ExecuteAction', async req => {
             log.info("[CWFM] Entered Action handler for 'ExecuteAction'");
+            console.log("[CWFM] req.params value is %s", req.params[0]);
+            console.log("[CWFM] req.data value is");
+            console.log(req.data);
+            await this.setStatusForAllPending('APPR');
+            return { Success: true, MessageText: "Timesheet is Approved Successfully", DeleteOnReturn: true };
         });
 
         /**
@@ -28,6 +42,8 @@ class TimesheetService extends cds.ApplicationService {
          */
         this.on('BulkActionByHeader', async req => {
             log.info("[CWFM] Entered Action handler for 'BulkActionByHeader'");
+            await this.setStatusForAllPending('APPR');
+            return { Success: true, MessageText: "Timesheets are Approved Successfully", DeleteOnReturn: true };
         });
 
         /**
@@ -93,17 +109,19 @@ class TimesheetService extends cds.ApplicationService {
         this.on('approveTimesheet', async (req) => {
             let guid = (req.data.ID === undefined) ? req.params[0].ID : req.data.ID;
             let rows = await SELECT("*").from(req.target).where({ id: guid });
-            switch (rows[0].status_code) {
-                case 'PEND':
-                case 'PROC':
-                    await UPDATE(req.target, guid).with({ status_code: 'APPR' });
-                    break;
-                case 'APPR':
-                    req.error(200, 'Timesheet is already Approved');
-                    break;
-                default:
-                    req.error(400, `Please select a Timesheet in status 'Pending Approval'`);
-                    break;
+            if (rows.length) {
+                switch (rows[0].status_code) {
+                    case 'PEND':
+                    case 'PROC':
+                        await UPDATE(req.target, guid).with({ status_code: 'APPR' });
+                        break;
+                    case 'APPR':
+                        req.error(200, 'Timesheet is already Approved');
+                        break;
+                    default:
+                        req.error(400, `Please select a Timesheet in status 'Pending Approval'`);
+                        break;
+                }
             }
         });
 
@@ -113,17 +131,19 @@ class TimesheetService extends cds.ApplicationService {
         this.on('rejectTimesheet', async (req) => {
             let guid = (req.data.ID === undefined) ? req.params[0].ID : req.data.ID;
             let rows = await SELECT("*").from(req.target).where({ id: guid });
-            switch (rows[0].status_code) {
-                case 'PROC':
-                case 'PEND':
-                    await UPDATE(req.target, guid).with({ status_code: 'REJE' });
-                    break;
-                case 'REJE':
-                    req.error(200, 'Timesheet is already Rejected');
-                    break;
-                default:
-                    req.error(400, `Please select a Timesheet in status 'Pending Approval'`);
-                    break;
+            if (rows.length) {
+                switch (rows[0].status_code) {
+                    case 'PROC':
+                    case 'PEND':
+                        await UPDATE(req.target, guid).with({ status_code: 'REJE' });
+                        break;
+                    case 'REJE':
+                        req.error(200, 'Timesheet is already Rejected');
+                        break;
+                    default:
+                        req.error(400, `Please select a Timesheet in status 'Pending Approval'`);
+                        break;
+                }
             }
         });
 
@@ -131,4 +151,5 @@ class TimesheetService extends cds.ApplicationService {
         return super.init();
     }
 }
+
 module.exports = TimesheetService
