@@ -17,12 +17,12 @@ LineItem : [
     { $Type : 'UI.DataFieldForAction', Action : 'TimesheetService.approveTimesheet', Label : 'Approve' },    
     { $Type : 'UI.DataFieldForAction', Action : 'TimesheetService.rejectTimesheet', Label : 'Reject' },
     { $Type : 'UI.DataField', Label : 'Record ID',          Value : recordNumber },
+    { $Type : 'UI.DataField', Label : 'Status',             Value : status_code },
     { $Type : 'UI.DataField', Label : 'Partner ID',         Value : partnerID },
     { $Type : 'UI.DataField', Label : 'Work Date',          Value : workDate },
     { $Type : 'UI.DataField', Label : 'Work Duration',      Value : workDuration },
     { $Type : 'UI.DataField', Label : 'Project Reference',  Value : projectReference },
-    { $Type : 'UI.DataField', Label : 'Match Score',        Value : matchScore, Criticality : criticality },
-    { $Type : 'UI.DataField', Label : 'Status',             Value : status_code }
+    { $Type : 'UI.DataField', Label : 'Match Score',        Value : matchScore, Criticality : criticality }
 ],
 
 FieldGroup#Group1 : {

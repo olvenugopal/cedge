@@ -39,7 +39,7 @@ function createNotification({ notificationId, recordNumber, partnerID, workDate,
 
     return {
         //Id: (notificationId === undefined || notificationId === null) ? uuidv4() : notificationId,
-        OriginId: "",
+        OriginId: "cwfm-timesheet-ntf-callback",
         NotificationTypeKey: NOTIF_TYPE_KEY,
         NotificationTypeVersion: NOTIF_TYPE_VERSION,
         NavigationTargetAction: "display",

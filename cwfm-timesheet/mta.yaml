@@ -69,7 +69,7 @@ modules:
     parameters:
       buildpack: nodejs_buildpack
 
-  # ---------------- DESTINATION CONTENT ------------------
+  # ----- DESTINATION CONTENT: FOR MANAGED APPROUTER ------
   - name: cwfm-timesheet-destination-content
     type: com.sap.application.content
     requires:
@@ -92,11 +92,11 @@ modules:
               ServiceInstanceName: cwfm-timesheet-html5-service
               ServiceKeyName: cwfm-timesheet-repo-host-key
               sap.cloud.service: cwfm.timesheet
-            - Authentication: OAuth2UserTokenExchange
-              Name: cwfm-timesheet-managed-approuter_cwfm-timesheet-xsuaa
+            - Name: cwfm-timesheet-managed-approuter_cwfm-timesheet-xsuaa
               ServiceInstanceName: cwfm-timesheet-xsuaa
               ServiceKeyName: cwfm-timesheet-xsuaa-key
               sap.cloud.service: cwfm.timesheet
+              Authentication: OAuth2UserTokenExchange
           existing_destinations_policy: ignore
     build-parameters:
       no-source: true
