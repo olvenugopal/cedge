@@ -1,6 +1,6 @@
-# Getting Started
+# Cloud Workforce Management - Timesheet
 
-Welcome to your new project.
+Welcome to the Timesheet App in Cloud Workforce Management.
 
 It contains these folders and files, following our recommended project layout:
 
